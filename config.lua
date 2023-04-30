@@ -6,6 +6,9 @@
 vim.opt.shiftwidth = 2
 vim.opt.tabstop = 2
 vim.opt.relativenumber = true
+-- vim.opt.mouse = "nv"
+vim.opt.termguicolors = true
+vim.opt.colorcolumn = { "80", "90", "120" }
 
 -- general
 lvim.log.level = "info"
@@ -118,6 +121,7 @@ linters.setup {
 
 lvim.plugins = {
   { "Mofiqul/vscode.nvim" },
+  { "leoluz/nvim-dap-go" }
 }
 
 -- -- Autocommands (`:help autocmd`) <https://neovim.io/doc/user/autocmd.html>
@@ -128,3 +132,10 @@ lvim.plugins = {
 --     require("nvim-treesitter.highlight").attach(0, "bash")
 --   end,
 -- })
+
+local dap_ok, dapgo = pcall(require, "dap-go")
+if not dap_ok then
+  return
+end
+
+dapgo.setup()
