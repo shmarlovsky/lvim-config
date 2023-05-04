@@ -138,4 +138,14 @@ if not dap_ok then
   return
 end
 
-dapgo.setup()
+dapgo.setup {
+  dap_configurations = {
+    {
+      -- Must be "go" or it will be ignored by the plugin
+      type = "go",
+      name = "Launch main",
+      request = "launch",
+      program = "./main.go"
+    },
+  },
+}
