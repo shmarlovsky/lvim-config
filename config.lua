@@ -25,8 +25,8 @@ lvim.leader = "space"
 -- add your own keymapping
 lvim.keys.normal_mode["<C-s>"] = ":w<cr>"
 
--- lvim.keys.normal_mode["<S-l>"] = ":BufferLineCycleNext<CR>"
--- lvim.keys.normal_mode["<S-h>"] = ":BufferLineCyclePrev<CR>"
+lvim.keys.normal_mode["<S-l>"] = ":BufferLineCycleNext<CR>"
+lvim.keys.normal_mode["<S-h>"] = ":BufferLineCyclePrev<CR>"
 
 -- -- Use which-key to add extra bindings with the leader-key prefix
 -- lvim.builtin.which_key.mappings["W"] = { "<cmd>noautocmd w<cr>", "Save without formatting" }
@@ -120,8 +120,16 @@ linters.setup {
 -- }
 
 lvim.plugins = {
+  -- common
+  { "BurntSushi/ripgrep" },
+  { "sharkdp/fd" },
+
+  -- themes
   { "Mofiqul/vscode.nvim" },
-  { "leoluz/nvim-dap-go" }
+
+  -- debug
+  { "leoluz/nvim-dap-go" },
+
 }
 
 -- -- Autocommands (`:help autocmd`) <https://neovim.io/doc/user/autocmd.html>
