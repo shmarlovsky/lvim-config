@@ -139,9 +139,11 @@ lvim.plugins = {
     end,
   },
 
-  -- debug
-  { "leoluz/nvim-dap-go" },
   { "vim-test/vim-test" },
+
+  -- Golang
+  { "leoluz/nvim-dap-go" },
+  { "fatih/vim-go" }
 }
 
 -- -- Autocommands (`:help autocmd`) <https://neovim.io/doc/user/autocmd.html>
@@ -152,6 +154,12 @@ lvim.plugins = {
 --     require("nvim-treesitter.highlight").attach(0, "bash")
 --   end,
 -- })
+vim.api.nvim_create_autocmd('BufWritePre', {
+  pattern = '*.go',
+  callback = function()
+    vim.lsp.buf.code_action({ context = { only = { 'source.organizeImports' } }, apply = true })
+  end
+})
 
 local dap_ok, dapgo = pcall(require, "dap-go")
 if not dap_ok then
@@ -169,4 +177,3 @@ dapgo.setup {
     },
   },
 }
-
