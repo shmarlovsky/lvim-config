@@ -8,13 +8,13 @@ vim.opt.tabstop = 2
 vim.opt.relativenumber = true
 -- vim.opt.mouse = "nv"
 vim.opt.termguicolors = true
-vim.opt.colorcolumn = { "80", "90", "120" }
+vim.opt.colorcolumn = { "120" }
 
 -- general
 lvim.log.level = "info"
 lvim.format_on_save = {
   enabled = true,
-  pattern = { "*.lua", "*.go" },
+  pattern = { "*.lua", "*.go", "*.py" },
   timeout = 1000,
 }
 -- to disable icons and use a minimalist setup, uncomment the following
@@ -31,6 +31,16 @@ lvim.keys.normal_mode["<S-h>"] = ":BufferLineCyclePrev<CR>"
 -- Centers cursor when moving 1/2 page down
 lvim.keys.normal_mode["<C-d>"] = "<C-d>zz"
 lvim.keys.normal_mode["<C-u>"] = "<C-u>zz"
+
+-- ctrl + /
+lvim.lsp.buffer_mappings.normal_mode['<C-_>'] = {
+  "<Plug>(comment_toggle_linewise_current)",
+  "Comment toggle current line",
+}
+lvim.lsp.buffer_mappings.visual_mode['<C-_>'] = {
+  "<Plug>(comment_toggle_linewise_visual)",
+  "Comment toggle linewise (visual)",
+}
 
 -- -- Use which-key to add extra bindings with the leader-key prefix
 -- lvim.builtin.which_key.mappings["W"] = { "<cmd>noautocmd w<cr>", "Save without formatting" }
@@ -85,11 +95,20 @@ local formatters = require "lvim.lsp.null-ls.formatters"
 formatters.setup {
   { command = "gofumpt" },
   { command = "goimports" },
+  {
+    command = "black",
+    args = { "--line-length", "120" },
+  },
 }
 
 local linters = require "lvim.lsp.null-ls.linters"
 linters.setup {
-  { command = "staticcheck" }
+  { command = "staticcheck" },
+  {
+    command = "flake8",
+    filetypes = { "python" },
+    args = { "--max-line-length", "120" },
+  },
 }
 -- formatters.setup {
 --   { command = "stylua" },
