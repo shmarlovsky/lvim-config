@@ -3,7 +3,7 @@
  `lvim` is the global options object
 ]]
 -- vim options
--- vim.opt.wrap = true
+vim.opt.wrap = true
 vim.opt.shiftwidth = 2
 vim.opt.tabstop = 2
 vim.opt.relativenumber = true
@@ -35,6 +35,8 @@ lvim.keys.normal_mode["<S-h>"] = ":BufferLineCyclePrev<CR>"
 lvim.keys.normal_mode["<C-d>"] = "<C-d>zz"
 lvim.keys.normal_mode["<C-u>"] = "<C-u>zz"
 
+lvim.keys.visual_mode["<leader>p"] = "\"_dP"
+
 -- ctrl + /
 lvim.lsp.buffer_mappings.normal_mode['<C-_>'] = {
   "<Plug>(comment_toggle_linewise_current)",
@@ -51,6 +53,9 @@ vim.keymap.set('n', '//', function()
   -- You can pass additional configuration to telescope to change theme, layout, etc.
   require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
     winblend = 10,
+    layout_config = {
+      width = 0.8,
+    },
     previewer = false,
   })
 end, { desc = '[/] Fuzzily search in current buffer' })
@@ -76,7 +81,7 @@ lvim.colorscheme = "vscode"
 lvim.builtin.telescope.defaults = {
   layout_strategy = "horizontal",
   layout_config = {
-    horizontal = { width = 0.7, height = 0.7 }
+    horizontal = { width = 0.9, height = 0.8, preview_width = 0.55 }
   },
 }
 
@@ -240,27 +245,27 @@ dapgo.setup {
 
 
 -- folding config
-vim.o.foldcolumn = '1' -- '0' is not bad
-vim.o.foldlevel = 99   -- Using ufo provider need a large value, feel free to decrease the value
-vim.o.foldlevelstart = 99
-vim.o.foldenable = true
+-- vim.o.foldcolumn = '1' -- '0' is not bad
+-- vim.o.foldlevel = 99   -- Using ufo provider need a large value, feel free to decrease the value
+-- vim.o.foldlevelstart = 99
+-- vim.o.foldenable = true
 
--- Using ufo provider need remap `zR` and `zM`. If Neovim is 0.6.1, remap yourself
-vim.keymap.set('n', 'zR', require('ufo').openAllFolds)
-vim.keymap.set('n', 'zM', require('ufo').closeAllFolds)
+-- -- Using ufo provider need remap `zR` and `zM`. If Neovim is 0.6.1, remap yourself
+-- vim.keymap.set('n', 'zR', require('ufo').openAllFolds)
+-- vim.keymap.set('n', 'zM', require('ufo').closeAllFolds)
 
--- Tell the server the capability of foldingRange,
--- Neovim hasn't added foldingRange to default capabilities, users must add it manually
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities.textDocument.foldingRange = {
-  dynamicRegistration = false,
-  lineFoldingOnly = true
-}
-local language_servers = require("lspconfig").util.available_servers() -- or list servers manually like {'gopls', 'clangd'}
-for _, ls in ipairs(language_servers) do
-  require('lspconfig')[ls].setup({
-    capabilities = capabilities
-    -- you can add other fields for setting up lsp server in this table
-  })
-end
-require('ufo').setup()
+-- -- Tell the server the capability of foldingRange,
+-- -- Neovim hasn't added foldingRange to default capabilities, users must add it manually
+-- local capabilities = vim.lsp.protocol.make_client_capabilities()
+-- capabilities.textDocument.foldingRange = {
+--   dynamicRegistration = false,
+--   lineFoldingOnly = true
+-- }
+-- local language_servers = require("lspconfig").util.available_servers() -- or list servers manually like {'gopls', 'clangd'}
+-- for _, ls in ipairs(language_servers) do
+--   require('lspconfig')[ls].setup({
+--     capabilities = capabilities
+--     -- you can add other fields for setting up lsp server in this table
+--   })
+-- end
+-- require('ufo').setup()
