@@ -134,6 +134,10 @@ formatters.setup {
   { command = "gofumpt" },
   { command = "goimports" },
   {
+    command = "golines",
+    args = { "-m", "120" },
+  },
+  {
     command = "black",
     args = { "--line-length", "120" },
   },
@@ -237,7 +241,7 @@ dapgo.setup {
       type = "go",
       name = "Launch main",
       request = "launch",
-      program = "./main.go"
+      program = "./cmd/main/main.go"
     },
   },
 }
