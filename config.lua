@@ -193,6 +193,7 @@ lvim.plugins = {
   -- common
   { "BurntSushi/ripgrep" },
   { "sharkdp/fd" },
+  { 'neovim/nvim-lspconfig' },
 
   -- themes
   { "Mofiqul/vscode.nvim" },
@@ -211,8 +212,11 @@ lvim.plugins = {
 
   -- Golang
   { "leoluz/nvim-dap-go" },
-  { "fatih/vim-go" }
+  { "fatih/vim-go" },
+  -- go templ
+  { "joerdav/templ.vim" },
 }
+
 
 -- -- Autocommands (`:help autocmd`) <https://neovim.io/doc/user/autocmd.html>
 -- vim.api.nvim_create_autocmd("FileType", {
@@ -245,8 +249,26 @@ dapgo.setup {
     },
   },
 }
-
-
+-- additional filetypes
+vim.filetype.add({
+  extension = {
+    templ = "templ",
+  },
+})
+-- somehow lspconfig does not see templ configuration, configure it here
+local lspconfig = require 'lspconfig'
+local configs = require 'lspconfig.configs'
+if not configs.templ then
+  print("init templ config")
+  configs.templ = {
+    default_config = {
+      cmd = { 'templ', 'lsp' },
+      root_dir = lspconfig.util.root_pattern('go.work', 'go.mod', '.git'),
+      filetypes = { 'templ' },
+    },
+  }
+end
+lspconfig.templ.setup {}
 
 -- folding config
 -- vim.o.foldcolumn = '1' -- '0' is not bad
@@ -272,4 +294,5 @@ dapgo.setup {
 --     -- you can add other fields for setting up lsp server in this table
 --   })
 -- end
+-- require('ufo').setup()
 -- require('ufo').setup()
