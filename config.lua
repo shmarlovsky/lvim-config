@@ -255,16 +255,28 @@ vim.filetype.add({
     templ = "templ",
   },
 })
+-- enabled html lsp for templ file also
+require 'lspconfig'.html.setup {
+  filetypes = { "html", "templ" },
+}
+
+-- move between start and end tag with matchit for templ files also
+vim.api.nvim_create_autocmd("BufEnter", {
+  pattern = { "*.templ" },
+  -- enable wrap mode for json files only
+  command = "setfiletype html",
+})
+
+
 -- somehow lspconfig does not see templ configuration, configure it here
 local lspconfig = require 'lspconfig'
 local configs = require 'lspconfig.configs'
 if not configs.templ then
-  print("init templ config")
   configs.templ = {
     default_config = {
       cmd = { 'templ', 'lsp' },
       root_dir = lspconfig.util.root_pattern('go.work', 'go.mod', '.git'),
-      filetypes = { 'templ' },
+      filetypes = { 'templ', 'html' },
     },
   }
 end
