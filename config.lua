@@ -3,7 +3,7 @@
  `lvim` is the global options object
 ]]
 -- vim options
-vim.opt.wrap = true
+vim.opt.wrap = false
 vim.opt.shiftwidth = 2
 vim.opt.tabstop = 2
 vim.opt.relativenumber = true
@@ -27,6 +27,8 @@ lvim.leader = "space"
 lvim.keys.normal_mode["<C-s>"] = ":w<cr>"
 lvim.keys.insert_mode["kj"] = "<Esc>"
 lvim.keys.insert_mode["jk"] = "<Esc>"
+-- lvim.keys.visual_mode["kj"] = "<Esc>"
+-- lvim.keys.visual_mode["jk"] = "<Esc>"
 
 lvim.keys.normal_mode["<S-l>"] = ":BufferLineCycleNext<CR>"
 lvim.keys.normal_mode["<S-h>"] = ":BufferLineCyclePrev<CR>"
@@ -36,6 +38,7 @@ lvim.keys.normal_mode["<C-d>"] = "<C-d>zz"
 lvim.keys.normal_mode["<C-u>"] = "<C-u>zz"
 
 lvim.keys.visual_mode["<leader>p"] = "\"_dP"
+-- in visual mode surround selefrom typing import Tuple
 
 -- ctrl + /
 lvim.lsp.buffer_mappings.normal_mode['<C-_>'] = {
@@ -95,6 +98,50 @@ lvim.builtin.dap.ui.config.expand_lines = false
 
 -- Automatically install missing parsers when entering buffer
 lvim.builtin.treesitter.auto_install = true
+lvim.builtin.treesitter.incremental_selection = {
+  enable = true,
+  keymaps = {
+    init_selection = '<c-space>',
+    node_incremental = '<c-space>',
+    scope_incremental = '<c-s>',
+    node_decremental = '<M-space>',
+  },
+}
+lvim.builtin.treesitter.textobjects = {
+  select = {
+    enable = true,
+    lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
+    keymaps = {
+      -- You can use the capture groups defined in textobjects.scm
+      ['aa'] = '@parameter.outer',
+      ['ia'] = '@parameter.inner',
+      ['af'] = '@function.outer',
+      ['if'] = '@function.inner',
+      ['ac'] = '@class.outer',
+      ['ic'] = '@class.inner',
+    },
+  },
+  move = {
+    enable = true,
+    set_jumps = true, -- whether to set jumps in the jumplist
+    goto_next_start = {
+      [']m'] = '@function.outer',
+      [']]'] = '@class.outer',
+    },
+    goto_next_end = {
+      [']M'] = '@function.outer',
+      [']['] = '@class.outer',
+    },
+    goto_previous_start = {
+      ['[m'] = '@function.outer',
+      ['[['] = '@class.outer',
+    },
+    goto_previous_end = {
+      ['[M'] = '@function.outer',
+      ['[]'] = '@class.outer',
+    },
+  },
+}
 
 -- lvim.builtin.treesitter.ignore_install = { "haskell" }
 
@@ -194,11 +241,12 @@ lvim.plugins = {
   { "BurntSushi/ripgrep" },
   { "sharkdp/fd" },
   { 'neovim/nvim-lspconfig' },
+  { 'christoomey/vim-tmux-navigator' },
 
   -- themes
   { "Mofiqul/vscode.nvim" },
 
-  { "kevinhwang91/nvim-ufo", dependencies = { "kevinhwang91/promise-async" } },
+  { "kevinhwang91/nvim-ufo",         dependencies = { "kevinhwang91/promise-async" } },
 
   {
     "folke/todo-comments.nvim",
@@ -215,6 +263,16 @@ lvim.plugins = {
   { "fatih/vim-go" },
   -- go templ
   { "joerdav/templ.vim" },
+  { "tpope/vim-surround" },
+
+  -- markdown preview
+  -- install without yarn or npm
+  {
+    "iamcco/markdown-preview.nvim",
+    cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+    ft = { "markdown" },
+    build = function() vim.fn["mkdp#util#install"]() end,
+  }
 }
 
 
@@ -255,17 +313,13 @@ vim.filetype.add({
     templ = "templ",
   },
 })
--- enabled html lsp for templ file also
-require 'lspconfig'.html.setup {
-  filetypes = { "html", "templ" },
-}
 
 -- move between start and end tag with matchit for templ files also
-vim.api.nvim_create_autocmd("BufEnter", {
-  pattern = { "*.templ" },
-  -- enable wrap mode for json files only
-  command = "setfiletype html",
-})
+-- vim.api.nvim_create_autocmd("BufEnter", {
+--   pattern = { "*.templ" },
+--   -- enable wrap mode for json files only
+--   command = "setfiletype html",
+-- })
 
 
 -- somehow lspconfig does not see templ configuration, configure it here
@@ -276,11 +330,29 @@ if not configs.templ then
     default_config = {
       cmd = { 'templ', 'lsp' },
       root_dir = lspconfig.util.root_pattern('go.work', 'go.mod', '.git'),
-      filetypes = { 'templ', 'html' },
+      filetypes = { 'templ' },
     },
   }
 end
 lspconfig.templ.setup {}
+
+-- enabled html lsp for templ file also and enable autocomplete
+-- -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#html
+-- local capabilities = vim.lsp.protocol.make_client_capabilities()
+-- capabilities.textDocument.completion.completionItem.snippetSupport = true
+
+-- require 'lspconfig'.html.setup {
+--   capabilities = capabilities,
+--   filetypes = { "html", "templ" },
+--   init_options = {
+--     configurationSection = { "html", "css", "javascript" },
+--     embeddedLanguages = {
+--       css = true,
+--       javascript = true
+--     },
+--     provideFormatter = true
+--   }
+-- }
 
 -- folding config
 -- vim.o.foldcolumn = '1' -- '0' is not bad
