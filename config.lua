@@ -186,7 +186,7 @@ formatters.setup {
   },
   {
     command = "black",
-    args = { "--line-length", "120" },
+    args = { "--line-length", "100" },
   },
   {
     command = "prettier",
@@ -272,7 +272,23 @@ lvim.plugins = {
     cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
     ft = { "markdown" },
     build = function() vim.fn["mkdp#util#install"]() end,
-  }
+  },
+  {
+    'linux-cultist/venv-selector.nvim',
+    dependencies = { 'neovim/nvim-lspconfig', 'nvim-telescope/telescope.nvim', 'mfussenegger/nvim-dap-python' },
+    opts = {
+      -- Your options go here
+      name = "venv",
+      -- auto_refresh = false
+    },
+    -- event = 'VeryLazy', -- Optional: needed only if you want to type `:VenvSelect` without a keymapping
+    keys = {
+      -- Keymap to open VenvSelector to pick a venv.
+      { '<leader>vs', '<cmd>VenvSelect<cr>' },
+      -- Keymap to retrieve the venv from a cache (the one previously used for the same project directory).
+      { '<leader>vc', '<cmd>VenvSelectCached<cr>' },
+    },
+  },
 }
 
 
@@ -313,6 +329,20 @@ vim.filetype.add({
     templ = "templ",
   },
 })
+
+
+local dap = require('dap')
+dap.configurations.python = {
+  {
+    type = 'python',
+    request = 'launch',
+    name = "Launch file",
+    program = "${file}",
+    pythonPath = function()
+      return './venv/bin/python'
+    end,
+  },
+}
 
 -- move between start and end tag with matchit for templ files also
 -- vim.api.nvim_create_autocmd("BufEnter", {
