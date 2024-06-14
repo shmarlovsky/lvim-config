@@ -70,6 +70,9 @@ vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { de
 vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
 
+-- generate docsting with neogen
+vim.keymap.set('n', "<leader>'", require('neogen').generate, { desc = "Generate docsting with neogen" })
+
 lvim.lsp.buffer_mappings.normal_mode['gr'] = nil
 vim.keymap.set('n', 'gr', require('telescope.builtin').lsp_references, { desc = '[G]oto [R]eferences' })
 
@@ -289,6 +292,25 @@ lvim.plugins = {
       { '<leader>vc', '<cmd>VenvSelectCached<cr>' },
     },
   },
+  {
+    "danymat/neogen",
+    -- config = true,
+    -- Uncomment next line if you want to follow only stable versions
+    version = "*"
+  },
+}
+
+require('neogen').setup {
+  enabled = true,
+  languages = {
+    python = {
+      template = {
+        annotation_convention = "reST"
+        -- for a full list of annotation_conventions, see supported-languages below,
+        -- for more template configurations, see the language's configuration file in configurations/{lang}.lua
+      }
+    },
+  }
 }
 
 
